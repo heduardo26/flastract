@@ -20,8 +20,6 @@ public class MaterialContractKey implements Serializable {
 	  @Column(name = "material_id")
 	  private Integer materialId;
 	  
-	  
-
 	  @Column(name = "contract_id")
 	  private Integer contractId;
 

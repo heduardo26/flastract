@@ -139,7 +139,7 @@ public class ClientController {
 	 */
 	@PostMapping("/addMaterialsToContract")
 	public ResponseEntity<Map<String, Object>> addMaterialsToContract(@RequestBody ContractDetailDto contractDetail, BindingResult result){
-		System.out.println("heeeeeeeeeeeeeeeeeeeeeere");
+		//This map will help to store the responses
 		Map<String, Object> response = new HashMap<>();
 		
 		//Validate that the contract exist
@@ -152,27 +152,53 @@ public class ClientController {
 		//We must validate the Status of the contract but as this is a test we skip that part. 
 		
 		
-		//Add materials to the contract 
+		/**
+		 * Add materials to the contract 
+		 */
 		List<MaterialDto> materials =  contractDetail.getMaterialsDto();
-		//This list is to save the invalids materials
-		List<MaterialDto> materialsInvalids = new ArrayList<>();
 		
+		//This list is for save the invalids materials
+		List<MaterialDto> materialsInvalids = new ArrayList<>();
+		//This list is for save the materials already added to the contract
+		List<Material> materialsInContract  = new ArrayList<>();
+		
+		//We check the list of materials
 		for (MaterialDto materialDto : materials) {
 			 Optional<Material> material = materialService.getMaterialById(materialDto.getId());
 			 
 			 //Validate that the material exist
 			 if(material.isPresent()) {
 				 
+				 //Check if the material has already been added to the contract
+				 if( materialContractService.validateMaterialContract(material.get(),contract.get())) {
+					 materialsInContract.add(material.get());
+				 }
+				 
+				 //If the material is new to the contract we add it
 				 MaterialContract materialContract = new MaterialContract(material.get(),contract.get());
 				 materialContractService.save(materialContract);
-			 }
-			 
-			 materialsInvalids.add(materialDto);
+			 }else {
+				 //If no exits the material we add it to the Invalid Materials list
+				 materialsInvalids.add(materialDto);
+			 }	 
 		}
 		
+		//Create messages with the result of the material validations and list the materials
+		if(materialsInvalids.isEmpty() && materialsInContract.isEmpty())
+			response.put(Constant.MESAGE, "All materials were added to the contract");
+		
+		if(!materialsInvalids.isEmpty()) {
+			response.put("Invalid Materials", materialsInvalids);
+			response.put(Constant.MESAGE, "Some materials were invalids");
+		}
+		
+		if(!materialsInContract.isEmpty()) {
+			response.put("Added Materials", materialsInContract);
+			response.put(Constant.MESAGE, "some materials have already been added to the contract");
+		}
 		 
 	
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}	
 	
 }
