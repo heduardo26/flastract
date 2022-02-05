@@ -35,7 +35,7 @@ public class InvoiceDetail{
 	@ManyToOne
 	@JoinColumn(name="material_id")
 	@MapsId("material_id") 		
-	private Materials material;
+	private Material material;
 	
 	
 	private String description;

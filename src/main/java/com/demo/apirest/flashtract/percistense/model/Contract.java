@@ -12,6 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -44,20 +47,24 @@ public class Contract {
 	
 	@ManyToOne
 	@JoinColumn(name="client_id")
+	@JsonBackReference
 	private Client cliente;
 	
 	@ManyToOne
 	@JoinColumn(name="vendor_id")
+	@JsonBackReference
 	private Vendor vendor;
 	
 	@ManyToOne
 	@JoinColumn(name="status_id")
+	@JsonBackReference
 	private Status status;
 	
 	@OneToMany(mappedBy = "contract")
 	private List<Invoice> invoices;
 	
 	@OneToMany(mappedBy = "contract")
+	//@JsonManagedReference
 	private List<MaterialContract> materialContracts;
 	
 	

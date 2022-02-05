@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +35,7 @@ public class Vendor {
 	private String status;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vendor", cascade=CascadeType.ALL)
+	@JsonManagedReference
 	private List<Contract> contracts; 
 	
 }
